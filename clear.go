@@ -11,11 +11,11 @@ func Clear() error {
 	var err error
 
 	switch runtime.GOOS {
-	case strLinux, "darwin":
+	case "linux", "darwin":
 		cmd := exec.Command("clear")
 		cmd.Stdout = os.Stdout
 		err = cmd.Run()
-	case strWindows:
+	case "windows":
 		cmd := exec.Command("cmd", "/c", "cls")
 		cmd.Stdout = os.Stdout
 		err = cmd.Run()
