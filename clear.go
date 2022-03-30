@@ -1,25 +1,29 @@
 package clear
 
 import (
+	"errors"
 	"os"
 	"os/exec"
 	"runtime"
 )
 
+var ErrUnsupportedPlatform = errors.New("unsupported platform")
+
 // Clear clears console.
 func Clear() error {
-	var err error
-
-	switch runtime.GOOS {
-	case "linux", "darwin":
-		cmd := exec.Command("clear")
-		cmd.Stdout = os.Stdout
-		err = cmd.Run()
-	case "windows":
-		cmd := exec.Command("cmd", "/c", "cls")
-		cmd.Stdout = os.Stdout
-		err = cmd.Run()
+	commands := map[string]string{
+		"linux":   "clear",
+		"windows": "cls",
 	}
+
+	commandStr, isSupported := commands[runtime.GOOS]
+	if !isSupported {
+		return ErrUnsupportedPlatform
+	}
+
+	cmd := exec.Command(commandStr)
+	cmd.Stdout = os.Stdout
+	err := cmd.Run()
 
 	return err
 }
